@@ -103,7 +103,7 @@
                 <input type="text" name="name" placeholder="mis. Size, Suhu, Level Gula" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
                 <div class="flex items-center gap-4 text-xs">
                     <label class="flex items-center gap-1"><input type="checkbox" name="selection_type_multi" onchange="this.form.selection_type.value = this.checked ? 'multiple' : 'single'"> Boleh pilih lebih dari satu</label>
-                    <label class="flex items-center gap-1"><input type="checkbox" name="is_required"> Wajib dipilih</label>
+                    <label class="flex items-center gap-1"><input type="checkbox" name="is_required" value="1"> Wajib dipilih</label>
                 </div>
                 <input type="hidden" name="selection_type" value="single">
                 <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Tambah Grup</button>
