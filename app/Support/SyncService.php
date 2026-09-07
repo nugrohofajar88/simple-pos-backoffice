@@ -141,6 +141,31 @@ class SyncService
         return $results;
     }
 
+    /**
+     * Order beserta item+modifier yg masuk ke server SEJAK $since (cursor = created_at server,
+     * BUKAN mobile_created_at - order yg dibuat offline lalu baru dipush belakangan tetap harus
+     * kepull walau mobile_created_at-nya lebih lama dari cursor terakhir).
+     */
+    public function pullOrders(?string $since): \Illuminate\Support\Collection
+    {
+        $query = Order::query()->with('items.modifiers')->orderBy('created_at');
+        if ($since) {
+            $query->where('created_at', '>=', Carbon::parse($since));
+        }
+
+        return $query->get();
+    }
+
+    public function pullExpenses(?string $since): \Illuminate\Support\Collection
+    {
+        $query = Expense::query()->orderBy('created_at');
+        if ($since) {
+            $query->where('created_at', '>=', Carbon::parse($since));
+        }
+
+        return $query->get();
+    }
+
     public function pushExpenses(array $expenses): array
     {
         $results = [];

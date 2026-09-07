@@ -18,7 +18,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/modifier-groups/sync', [MenuController::class, 'syncModifierGroups']);
     Route::post('/modifier-options/sync', [MenuController::class, 'syncModifierOptions']);
 
+    Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/expenses', [ExpenseController::class, 'index']);
     Route::post('/expenses', [ExpenseController::class, 'store']);
     Route::post('/settings', [SettingController::class, 'store']);
 });
