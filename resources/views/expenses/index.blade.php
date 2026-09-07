@@ -3,31 +3,33 @@
 @section('title', 'Belanja')
 
 @section('content')
-    <div class="flex items-center justify-between mb-4">
-        <h1 class="text-xl font-semibold">Belanja</h1>
-        <button x-data @click="$refs.newExpenseForm.classList.toggle('hidden')"
-                class="bg-gray-900 text-white text-sm px-3 py-2 rounded">+ Tambah</button>
+    <div x-data class="mb-4">
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-semibold">Belanja</h1>
+            <button @click="$refs.newExpenseForm.classList.toggle('hidden')"
+                    class="bg-gray-900 text-white text-sm px-3 py-2 rounded">+ Tambah</button>
+        </div>
+
+        @if ($errors->any())
+            <div class="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form x-ref="newExpenseForm" method="POST" action="{{ route('expenses.store') }}"
+              class="hidden bg-white border rounded-lg p-4 flex gap-2 items-end">
+            @csrf
+            <div class="flex-1">
+                <label class="block text-xs font-medium mb-1">Keterangan</label>
+                <input type="text" name="description" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            </div>
+            <div class="w-40">
+                <label class="block text-xs font-medium mb-1">Jumlah (Rp)</label>
+                <input type="number" name="amount" required min="1" class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            </div>
+            <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Simpan</button>
+        </form>
     </div>
-
-    @if ($errors->any())
-        <div class="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
-    <form x-ref="newExpenseForm" method="POST" action="{{ route('expenses.store') }}"
-          class="hidden mb-6 bg-white border rounded-lg p-4 flex gap-2 items-end">
-        @csrf
-        <div class="flex-1">
-            <label class="block text-xs font-medium mb-1">Keterangan</label>
-            <input type="text" name="description" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-        </div>
-        <div class="w-40">
-            <label class="block text-xs font-medium mb-1">Jumlah (Rp)</label>
-            <input type="number" name="amount" required min="1" class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
-        </div>
-        <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Simpan</button>
-    </form>
 
     <div class="bg-white border rounded-lg overflow-hidden">
         <table class="w-full text-sm">

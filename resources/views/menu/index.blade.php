@@ -3,21 +3,23 @@
 @section('title', 'Menu')
 
 @section('content')
-    <div class="flex items-center justify-between mb-4">
-        <h1 class="text-xl font-semibold">Kelola Menu</h1>
-        <button x-data @click="$refs.newCategoryForm.classList.toggle('hidden')"
-                class="bg-gray-900 text-white text-sm px-3 py-2 rounded">+ Kategori</button>
-    </div>
-
-    <form x-ref="newCategoryForm" method="POST" action="{{ route('menu.categories.store') }}"
-          class="hidden mb-6 bg-white border rounded-lg p-4 flex gap-2 items-end">
-        @csrf
-        <div class="flex-1">
-            <label class="block text-xs font-medium mb-1">Nama Kategori</label>
-            <input type="text" name="name" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+    <div x-data class="mb-4">
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-xl font-semibold">Kelola Menu</h1>
+            <button @click="$refs.newCategoryForm.classList.toggle('hidden')"
+                    class="bg-gray-900 text-white text-sm px-3 py-2 rounded">+ Kategori</button>
         </div>
-        <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Simpan</button>
-    </form>
+
+        <form x-ref="newCategoryForm" method="POST" action="{{ route('menu.categories.store') }}"
+              class="hidden bg-white border rounded-lg p-4 flex gap-2 items-end">
+            @csrf
+            <div class="flex-1">
+                <label class="block text-xs font-medium mb-1">Nama Kategori</label>
+                <input type="text" name="name" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
+            </div>
+            <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Simpan</button>
+        </form>
+    </div>
 
     @if ($errors->any())
         <div class="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">
