@@ -49,4 +49,5 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings/token', [SettingController::class, 'generateToken'])->name('settings.token');
+    Route::post('/settings/reset', [SettingController::class, 'resetData'])->name('settings.reset');
 });

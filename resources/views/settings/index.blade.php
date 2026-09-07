@@ -36,4 +36,30 @@
             </form>
         </div>
     </div>
+
+    <div class="mt-6 bg-white border border-red-200 rounded-lg p-4">
+        <h2 class="font-semibold text-sm text-red-700 mb-2">Zona Berbahaya</h2>
+        <p class="text-xs text-gray-500 mb-3">
+            Reset menghapus PERMANEN semua kategori, produk, modifier, order, dan belanja (dari semua HP yg sync ke sini).
+            Akun login &amp; token API mobile TIDAK ikut terhapus, gak perlu pairing ulang. Tindakan ini tidak bisa dibatalkan.
+        </p>
+
+        <form method="POST" action="{{ route('settings.reset') }}"
+              x-data="{ confirmText: '' }"
+              onsubmit="return confirm('Yakin? Semua data akan hilang permanen dan tidak bisa dikembalikan.')">
+            @csrf
+            <label class="block text-xs font-medium mb-1">Ketik <span class="font-mono font-semibold">HAPUS SEMUA</span> untuk konfirmasi</label>
+            <input type="text" name="confirm" x-model="confirmText" autocomplete="off"
+                   class="w-full max-w-xs rounded border border-gray-300 px-3 py-2 text-sm mb-3">
+            <button type="submit" :disabled="confirmText !== 'HAPUS SEMUA'"
+                    :class="confirmText === 'HAPUS SEMUA' ? 'bg-red-600' : 'bg-gray-300 cursor-not-allowed'"
+                    class="text-white text-sm px-4 py-2 rounded">
+                Reset Semua Data
+            </button>
+        </form>
+
+        @error('confirm')
+            <p class="text-xs text-red-600 mt-2">Ketikan konfirmasi tidak sesuai.</p>
+        @enderror
+    </div>
 @endsection
