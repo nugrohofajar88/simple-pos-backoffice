@@ -112,9 +112,17 @@ class SyncService
                 ]);
 
                 foreach ($orderData['items'] ?? [] as $itemData) {
+                    // Produk yg direferensikan mobile mungkin udah gak ada lagi di server (mis.
+                    // sehabis reset data) - product_id nullable (ON DELETE SET NULL), jadi kalau
+                    // gak ketemu jangan gagalkan seluruh push order-nya, null-kan aja referensinya.
+                    $productId = $itemData['productRemoteId'] ?? null;
+                    if ($productId && ! Product::query()->withTrashed()->whereKey($productId)->exists()) {
+                        $productId = null;
+                    }
+
                     $item = OrderItem::query()->create([
                         'order_id' => $order->id,
-                        'product_id' => $itemData['productRemoteId'] ?? null,
+                        'product_id' => $productId,
                         'product_name' => $itemData['productName'],
                         'unit_price' => $itemData['unitPrice'],
                         'cost_price' => $itemData['costPrice'] ?? 0,
