@@ -59,20 +59,22 @@
 
                 <div class="px-4 py-3">
                     <button @click="addProduct = !addProduct" class="text-xs text-blue-600 font-medium">+ Produk di {{ $category->name }}</button>
-                    <form x-show="addProduct" method="POST" action="{{ route('menu.products.store') }}" class="mt-2 flex gap-2 items-end">
+                    <form x-show="addProduct" method="POST" action="{{ route('menu.products.store') }}" class="mt-2 flex flex-col sm:flex-row gap-2 sm:items-end">
                         @csrf
                         <input type="hidden" name="category_id" value="{{ $category->id }}">
                         <div class="flex-1">
                             <label class="block text-xs font-medium mb-1">Nama Produk</label>
                             <input type="text" name="name" required class="w-full rounded border border-gray-300 px-2 py-1 text-sm">
                         </div>
-                        <div class="w-28">
-                            <label class="block text-xs font-medium mb-1">Harga</label>
-                            <input type="number" name="base_price" required min="0" class="w-full rounded border border-gray-300 px-2 py-1 text-sm">
-                        </div>
-                        <div class="w-28">
-                            <label class="block text-xs font-medium mb-1">HPP</label>
-                            <input type="number" name="cost_price" min="0" class="w-full rounded border border-gray-300 px-2 py-1 text-sm">
+                        <div class="flex gap-2">
+                            <div class="w-1/2 sm:w-28">
+                                <label class="block text-xs font-medium mb-1">Harga</label>
+                                <input type="number" name="base_price" required min="0" class="w-full rounded border border-gray-300 px-2 py-1 text-sm">
+                            </div>
+                            <div class="w-1/2 sm:w-28">
+                                <label class="block text-xs font-medium mb-1">HPP</label>
+                                <input type="number" name="cost_price" min="0" class="w-full rounded border border-gray-300 px-2 py-1 text-sm">
+                            </div>
                         </div>
                         <button type="submit" class="bg-gray-900 text-white text-xs px-3 py-2 rounded">Simpan</button>
                     </form>

@@ -5,8 +5,8 @@
 @section('content')
     <h1 class="text-xl font-semibold mb-4">Riwayat Order</h1>
 
-    <div class="bg-white border rounded-lg overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white border rounded-lg overflow-x-auto">
+        <table class="w-full text-sm min-w-[640px]">
             <thead class="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
                     <th class="px-4 py-2">No. Order</th>

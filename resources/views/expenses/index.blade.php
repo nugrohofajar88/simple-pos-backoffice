@@ -17,13 +17,13 @@
         @endif
 
         <form x-ref="newExpenseForm" method="POST" action="{{ route('expenses.store') }}"
-              class="hidden bg-white border rounded-lg p-4 flex gap-2 items-end">
+              class="hidden bg-white border rounded-lg p-4 flex flex-col sm:flex-row gap-2 sm:items-end">
             @csrf
             <div class="flex-1">
                 <label class="block text-xs font-medium mb-1">Keterangan</label>
                 <input type="text" name="description" required class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
             </div>
-            <div class="w-40">
+            <div class="sm:w-40">
                 <label class="block text-xs font-medium mb-1">Jumlah (Rp)</label>
                 <input type="number" name="amount" required min="1" class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
             </div>
@@ -31,8 +31,8 @@
         </form>
     </div>
 
-    <div class="bg-white border rounded-lg overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white border rounded-lg overflow-x-auto">
+        <table class="w-full text-sm min-w-[560px]">
             <thead class="bg-gray-50 text-left text-xs text-gray-500">
                 <tr>
                     <th class="px-4 py-2">Keterangan</th>
