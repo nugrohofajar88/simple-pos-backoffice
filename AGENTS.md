@@ -1,6 +1,6 @@
 # AGENTS.md — simple-pos-backoffice
 
-Web back-office pendamping **app mobile POS kafe** (`simple-pos`, Expo/React Native + SQLite, **local-first** — keputusan sengaja, mobile TIDAK bergantung API buat operasional harian). Project ini cuma menambahkan: kelola menu dari web, laporan, dan backup off-site.
+Backend **full REST API** buat app mobile POS kafe (`simple-pos`, Expo/React Native + SQLite). **Server ini satu-satunya sumber kebenaran** untuk menu & laporan — mobile TIDAK local-first lagi utk itu (baca live dari API tiap layar dibuka). SQLite lokal di mobile cuma dipakai sbg: (1) outbox order/belanja yg belum ke-sync (checkout tetap SELALU jalan offline), (2) cache read-only menu buat fallback pas gak ada internet. Edit menu dari mobile WAJIB online (langsung API call, gak ada edit lokal).
 
 - Stack: **Laravel 12, PHP 8.4, MySQL, Sanctum** (API auth), **Blade + Alpine.js** (dashboard, CDN only, no build step).
 - Produksi: `https://pos.fajarnugroho.info`.
@@ -16,18 +16,15 @@ Setelah ubah `.env`: **`php artisan config:clear`**.
 
 ## Arsitektur & konvensi
 - `casts()` method (bukan `$casts` property), relasi Eloquent bertipe, validasi inline `$request->validate()` di controller (no Form Request), logika bisnis di `app/Support/*Service.php`.
-- **`MenuService`** — create/update/delete kategori/produk/modifier (dipakai controller web DAN API, reuse langsung, bukan controller terpisah).
-- **`SyncService`** — kontrak sinkronisasi:
-  - `upsertSyncable()` — generic Last-Write-Wins upsert by `remoteId`, banding `updated_at` incoming vs existing.
-  - `pullMenu($since)` — data 2 arah (categories/products/modifier_groups/modifier_options), termasuk soft-deleted (`withTrashed`).
-  - `pushOrders()` / `pushExpenses()` — 1 arah dari mobile, idempotent (order dicek by `order_number` unique).
-- **`ReportService`** — angka dashboard, difilter dari `mobile_created_at` (waktu asli di HP), BUKAN `created_at` Laravel (waktu insert ke server) — supaya laporan match dgn tab Laporan di mobile.
+- **`MenuService`** — create/update/delete kategori/produk/modifier, dipakai LANGSUNG oleh controller web (`app/Http/Controllers/*`, redirect) DAN controller API (`app/Http/Controllers/Api/*`, JSON) — satu source of truth logic, beda cuma response shape.
+- **`SyncService`** — `pullMenu()` (snapshot penuh menu aktif, dipanggil `GET /api/menu`), `pushOrders()`/`pushExpenses()` (terima outbox dari mobile, idempotent — order dicek by `order_number` unique, product_id yg gak valid di-null-in bukan gagal total).
+- **`ReportService`** — dipakai `DashboardController` (web) DAN `Api\ReportController@summary` (`GET /api/reports/summary`, dikonsumsi mobile langsung) — angka difilter dari `mobile_created_at` (waktu asli di HP), BUKAN `created_at` Laravel.
 
-## Model sinkronisasi (PENTING)
-- **Menu (categories/products/modifier_groups/modifier_options): sync 2 arah**, Last-Write-Wins via `updated_at`. Soft-delete (`SoftDeletes`) di kedua sisi supaya penghapusan ikut ke-propagate.
-- **Orders/order_items/order_item_modifiers/expenses: push 1 arah** mobile→server saja (mobile tetap sumber utama — order immutable begitu dibuat, gak ada UI edit order di mobile atau di sini).
-- **Identitas baris lintas device**: mobile pakai kolom `remoteId` (nullable) yang nunjuk ke `id` asli di server — BUKAN migrasi PK ke UUID. Server gak tahu apa-apa soal id lokal mobile.
+## Model data (PENTING)
+- **Menu (categories/products/modifier_groups/modifier_options): server mutlak sumber kebenaran.** Edit dari web ATAU dari mobile (kalau online) sama-sama langsung ke `MenuService`, gak ada "sync 2 arah"/Last-Write-Wins lagi — mobile cuma nyimpen cache read-only hasil `GET /api/menu`, id di cache mobile = id server LANGSUNG (gak ada mapping `remoteId` lagi).
+- **Orders/order_items/order_item_modifiers/expenses: push 1 arah** mobile→server (mobile bikin dulu offline-safe, kirim pas online — order immutable begitu dibuat, gak ada UI edit order di mobile atau di sini). Kolom `remote_id` di mobile cuma dipakai buat order/expense (flag "sudah/belum ke-sync"), BUKAN buat menu lagi.
 - `settings` (store_name, initial_capital) di-push 1 arah dari mobile, ditampilkan read-only di web.
+- SoftDeletes tetap ada di 4 model menu (buat kebutuhan web sendiri, mis. audit), TAPI query API/pullMenu selalu exclude yg trashed — mobile gak pernah lihat soft-deleted rows.
 
 ## Hosting — shared cPanel, proc_open & exec() DIMATIKAN
 Host produksi mematikan **proc_open() dan exec()** (bukan cuma shell_exec) → dampak:

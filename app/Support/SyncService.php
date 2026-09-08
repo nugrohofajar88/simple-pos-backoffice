@@ -11,80 +11,21 @@ use App\Models\OrderItem;
 use App\Models\OrderItemModifier;
 use App\Models\Product;
 use App\Models\Setting;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SyncService
 {
     /**
-     * Upsert 1 baris hasil push dari mobile utk model yg support 2 arah sync (Last-Write-Wins).
-     * Balikin [remoteId, updatedAt] utk dikirim balik ke mobile.
+     * Snapshot penuh menu aktif (mobile selalu replace-total, bukan delta).
      */
-    public function upsertSyncable(string $modelClass, array $item, array $fields): array
+    public function pullMenu(): array
     {
-        /** @var Model $model */
-        $remoteId = $item['remoteId'] ?? null;
-        $incomingUpdatedAt = isset($item['updatedAt']) ? Carbon::parse($item['updatedAt']) : now();
-        $isDeleted = ! empty($item['deletedAt']);
-
-        $existing = $remoteId ? $modelClass::withTrashed()->find($remoteId) : null;
-
-        if (! $existing) {
-            if ($isDeleted) {
-                // Baris baru yg langsung dihapus sebelum sempat sync - abaikan saja.
-                return ['remoteId' => null, 'updatedAt' => $incomingUpdatedAt->toIso8601String()];
-            }
-
-            $data = array_intersect_key($item, array_flip($fields));
-            $model = $modelClass::query()->create($data);
-            $model->forceFill(['updated_at' => $incomingUpdatedAt])->save();
-
-            return ['remoteId' => $model->id, 'updatedAt' => $model->updated_at->toIso8601String()];
-        }
-
-        // Last-Write-Wins: server cuma nerima perubahan kalau versi mobile lebih baru.
-        if ($existing->updated_at && $incomingUpdatedAt->lessThanOrEqualTo($existing->updated_at)) {
-            return [
-                'remoteId' => $existing->id,
-                'updatedAt' => $existing->updated_at->toIso8601String(),
-                'deletedAt' => $existing->deleted_at?->toIso8601String(),
-            ];
-        }
-
-        if ($isDeleted) {
-            $existing->forceFill(['updated_at' => $incomingUpdatedAt])->save();
-            $existing->delete();
-
-            return [
-                'remoteId' => $existing->id,
-                'updatedAt' => $incomingUpdatedAt->toIso8601String(),
-                'deletedAt' => $existing->fresh()?->deleted_at?->toIso8601String(),
-            ];
-        }
-
-        if ($existing->trashed()) {
-            $existing->restore();
-        }
-
-        $data = array_intersect_key($item, array_flip($fields));
-        $existing->update($data);
-        $existing->forceFill(['updated_at' => $incomingUpdatedAt])->save();
-
-        return ['remoteId' => $existing->id, 'updatedAt' => $existing->updated_at->toIso8601String(), 'deletedAt' => null];
-    }
-
-    public function pullMenu(?string $since): array
-    {
-        $query = fn ($modelClass) => $since
-            ? $modelClass::withTrashed()->where('updated_at', '>=', Carbon::parse($since))
-            : $modelClass::withTrashed();
-
         return [
-            'categories' => $query(Category::class)->get(),
-            'products' => $query(Product::class)->get(),
-            'modifierGroups' => $query(ModifierGroup::class)->get(),
-            'modifierOptions' => $query(ModifierOption::class)->get(),
+            'categories' => Category::query()->orderBy('sort_order')->get(),
+            'products' => Product::query()->orderBy('sort_order')->get(),
+            'modifierGroups' => ModifierGroup::query()->orderBy('sort_order')->get(),
+            'modifierOptions' => ModifierOption::query()->orderBy('sort_order')->get(),
         ];
     }
 

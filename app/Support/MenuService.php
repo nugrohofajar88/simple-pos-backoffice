@@ -6,27 +6,9 @@ use App\Models\Category;
 use App\Models\ModifierGroup;
 use App\Models\ModifierOption;
 use App\Models\Product;
-use Illuminate\Support\Carbon;
 
 class MenuService
 {
-    /**
-     * Terapkan perubahan cuma kalau belum ada versi lebih baru di server (Last-Write-Wins).
-     * Dipakai saat mobile push perubahan - kalau field `updated_at` dari mobile lebih lama
-     * dari yang tersimpan di server, perubahan diabaikan (server yang menang).
-     */
-    public function isIncomingNewer(?Carbon $localUpdatedAt, ?string $incomingUpdatedAt): bool
-    {
-        if (! $incomingUpdatedAt) {
-            return true;
-        }
-        if (! $localUpdatedAt) {
-            return true;
-        }
-
-        return Carbon::parse($incomingUpdatedAt)->greaterThan($localUpdatedAt);
-    }
-
     public function createCategory(array $data): Category
     {
         return Category::query()->create([
