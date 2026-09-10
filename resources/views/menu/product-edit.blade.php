@@ -54,32 +54,71 @@
 
             <div class="space-y-4">
                 @forelse ($product->modifierGroups as $group)
-                    <div class="border rounded p-3">
-                        <div class="flex items-center justify-between mb-2">
+                    <div class="border rounded p-3" x-data="{ editingGroup: false }">
+                        <div x-show="!editingGroup" class="flex items-center justify-between mb-2">
                             <div class="text-sm font-medium">
                                 {{ $group->name }}
                                 <span class="text-xs text-gray-400 font-normal">
                                     ({{ $group->selection_type === 'multiple' ? 'multi' : 'single' }}{{ $group->is_required ? ', wajib' : '' }})
                                 </span>
                             </div>
-                            <form method="POST" action="{{ route('menu.modifier-groups.destroy', $group) }}"
-                                  onsubmit="return confirm('Hapus grup {{ $group->name }}?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-xs text-red-600">Hapus</button>
-                            </form>
+                            <div class="flex items-center gap-3">
+                                <button type="button" @click="editingGroup = true" class="text-xs text-blue-600">Edit</button>
+                                <form method="POST" action="{{ route('menu.modifier-groups.destroy', $group) }}"
+                                      onsubmit="return confirm('Hapus grup {{ $group->name }}?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-xs text-red-600">Hapus</button>
+                                </form>
+                            </div>
                         </div>
+
+                        <form x-show="editingGroup" x-cloak method="POST" action="{{ route('menu.modifier-groups.update', $group) }}" class="mb-2 space-y-2">
+                            @csrf @method('PUT')
+                            <input type="text" name="name" value="{{ $group->name }}" required class="w-full rounded border border-gray-300 px-2 py-1 text-xs">
+                            <div class="flex items-center gap-4 text-xs">
+                                <label class="flex items-center gap-1">
+                                    <input type="checkbox" name="selection_type_multi" @checked($group->selection_type === 'multiple')
+                                           onchange="this.form.selection_type.value = this.checked ? 'multiple' : 'single'"> Boleh pilih lebih dari satu
+                                </label>
+                                <label class="flex items-center gap-1">
+                                    <input type="checkbox" name="is_required" value="1" @checked($group->is_required)> Wajib dipilih
+                                </label>
+                            </div>
+                            <input type="hidden" name="selection_type" value="{{ $group->selection_type }}">
+                            <div class="flex items-center gap-2">
+                                <button type="submit" class="bg-gray-900 text-white text-xs px-3 py-1.5 rounded">Simpan</button>
+                                <button type="button" @click="editingGroup = false" class="text-xs text-gray-500">Batal</button>
+                            </div>
+                        </form>
 
                         <div class="space-y-1 mb-2">
                             @foreach ($group->options as $option)
-                                <div class="flex items-center justify-between text-xs pl-2">
-                                    <span>
-                                        {{ $option->name }}
-                                        @if($option->price_delta > 0) (+Rp{{ number_format($option->price_delta, 0, ',', '.') }}) @endif
-                                        @if($option->is_default) <span class="text-green-600">· default</span> @endif
-                                    </span>
-                                    <form method="POST" action="{{ route('menu.modifier-options.destroy', $option) }}">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600">Hapus</button>
+                                <div x-data="{ editingOption: false }">
+                                    <div x-show="!editingOption" class="flex items-center justify-between text-xs pl-2">
+                                        <span>
+                                            {{ $option->name }}
+                                            @if($option->price_delta > 0) (+Rp{{ number_format($option->price_delta, 0, ',', '.') }}) @endif
+                                            @if($option->is_default) <span class="text-green-600">· default</span> @endif
+                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" @click="editingOption = true" class="text-blue-600">Edit</button>
+                                            <form method="POST" action="{{ route('menu.modifier-options.destroy', $option) }}">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="text-red-600">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <form x-show="editingOption" x-cloak method="POST" action="{{ route('menu.modifier-options.update', $option) }}"
+                                          class="flex items-center gap-1 pl-2 py-1">
+                                        @csrf @method('PUT')
+                                        <input type="text" name="name" value="{{ $option->name }}" required class="flex-1 rounded border border-gray-300 px-2 py-1 text-xs">
+                                        <input type="number" name="price_delta" value="{{ $option->price_delta }}" class="w-16 rounded border border-gray-300 px-2 py-1 text-xs">
+                                        <label class="flex items-center gap-1 text-xs whitespace-nowrap">
+                                            <input type="checkbox" name="is_default" value="1" @checked($option->is_default)> default
+                                        </label>
+                                        <button type="submit" class="bg-gray-900 text-white text-xs px-2 py-1 rounded">Simpan</button>
+                                        <button type="button" @click="editingOption = false" class="text-xs text-gray-500">Batal</button>
                                     </form>
                                 </div>
                             @endforeach
