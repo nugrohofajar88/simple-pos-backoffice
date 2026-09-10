@@ -8,11 +8,17 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-lg border p-4">
             <div class="text-xs text-gray-500 mb-1">Omzet Hari Ini</div>
-            <div class="text-xl font-bold">Rp{{ number_format($summary['todayTotal'], 0, ',', '.') }}</div>
+            <div class="text-xl font-bold">
+                Rp{{ number_format($summary['todayTotal'], 0, ',', '.') }}
+                <span class="text-sm font-normal text-gray-500">({{ number_format($summary['todayCups'], 0, ',', '.') }} cups)</span>
+            </div>
         </div>
         <div class="bg-white rounded-lg border p-4">
             <div class="text-xs text-gray-500 mb-1">Omzet Bulan Ini</div>
-            <div class="text-xl font-bold">Rp{{ number_format($summary['monthTotal'], 0, ',', '.') }}</div>
+            <div class="text-xl font-bold">
+                Rp{{ number_format($summary['monthTotal'], 0, ',', '.') }}
+                <span class="text-sm font-normal text-gray-500">({{ number_format($summary['monthCups'], 0, ',', '.') }} cups)</span>
+            </div>
         </div>
         <div class="bg-white rounded-lg border p-4">
             <div class="text-xs text-gray-500 mb-1">Belanja Bulan Ini</div>

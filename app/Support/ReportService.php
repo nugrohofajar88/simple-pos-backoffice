@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Expense;
 use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Support\Carbon;
 
 class ReportService
@@ -19,10 +20,18 @@ class ReportService
             ->where('mobile_created_at', '>=', $startOfDay)
             ->sum('total');
 
+        $todayCups = (int) OrderItem::query()
+            ->whereHas('order', fn ($q) => $q->where('status', 'completed')->where('mobile_created_at', '>=', $startOfDay))
+            ->sum('qty');
+
         $monthTotal = (int) Order::query()
             ->where('status', 'completed')
             ->where('mobile_created_at', '>=', $startOfMonth)
             ->sum('total');
+
+        $monthCups = (int) OrderItem::query()
+            ->whereHas('order', fn ($q) => $q->where('status', 'completed')->where('mobile_created_at', '>=', $startOfMonth))
+            ->sum('qty');
 
         $expenseMonthTotal = (int) Expense::query()
             ->where('mobile_created_at', '>=', $startOfMonth)
@@ -46,7 +55,9 @@ class ReportService
 
         return [
             'todayTotal' => $todayTotal,
+            'todayCups' => $todayCups,
             'monthTotal' => $monthTotal,
+            'monthCups' => $monthCups,
             'expenseMonthTotal' => $expenseMonthTotal,
             'last7Days' => $last7Days,
         ];
