@@ -59,4 +59,16 @@ class OrderController extends Controller
 
         return response()->json(['results' => $this->sync->pushOrders($orders)]);
     }
+
+    /**
+     * Order dihapus dari mobile (fitur "Hapus Order" - order tetap immutable, gak ada edit,
+     * cuma hapus lalu buat ulang). Route-model-binding otomatis 404 kalau order-nya udah gak
+     * ada - mobile treat 404 sbg "sukses" juga (tujuan akhirnya sama: gak ada lagi di server).
+     */
+    public function destroy(Order $order): JsonResponse
+    {
+        $order->delete();
+
+        return response()->json(['deleted' => true]);
+    }
 }
