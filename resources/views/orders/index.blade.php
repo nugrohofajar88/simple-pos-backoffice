@@ -5,6 +5,23 @@
 @section('content')
     <h1 class="text-xl font-semibold mb-4">Riwayat Order</h1>
 
+    <form method="GET" action="{{ route('orders.index') }}" class="bg-white border rounded-lg p-4 mb-4 flex flex-col sm:flex-row gap-3 sm:items-end">
+        <div>
+            <label class="block text-xs font-medium mb-1">Dari Tanggal</label>
+            <input type="date" name="from" value="{{ $from }}" class="rounded border border-gray-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+            <label class="block text-xs font-medium mb-1">Sampai Tanggal</label>
+            <input type="date" name="to" value="{{ $to }}" class="rounded border border-gray-300 px-3 py-2 text-sm">
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Filter</button>
+            @if ($from || $to)
+                <a href="{{ route('orders.index') }}" class="text-sm text-gray-500 px-2 py-2">Reset</a>
+            @endif
+        </div>
+    </form>
+
     <div class="bg-white border rounded-lg overflow-x-auto">
         <table class="w-full text-sm min-w-[640px]">
             <thead class="bg-gray-50 text-left text-xs text-gray-500">

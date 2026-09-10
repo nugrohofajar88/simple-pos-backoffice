@@ -4,16 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::query()->orderByDesc('mobile_created_at')->paginate(25);
+        $from = $request->query('from');
+        $to = $request->query('to');
+
+        $query = Order::query()->orderByDesc('mobile_created_at');
+        if ($from) {
+            $query->whereDate('mobile_created_at', '>=', $from);
+        }
+        if ($to) {
+            $query->whereDate('mobile_created_at', '<=', $to);
+        }
+
+        $orders = $query->paginate(25)->withQueryString();
 
         return view('orders.index', [
             'orders' => $orders,
+            'from' => $from,
+            'to' => $to,
         ]);
     }
 
