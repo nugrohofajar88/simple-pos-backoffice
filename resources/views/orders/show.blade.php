@@ -39,5 +39,18 @@
             <span class="font-semibold">Total</span>
             <span class="font-bold text-lg">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
         </div>
+
+        <div class="mt-4 border-t pt-3">
+            <p class="text-xs text-gray-500 mb-2">
+                Order gak bisa diedit — kalau ada yang salah, hapus lalu buat order baru dari mobile.
+                Menghapus di sini cuma menghapus catatan/laporan di web, order lokal di HP yang bikin
+                order ini TIDAK ikut terhapus.
+            </p>
+            <form method="POST" action="{{ route('orders.destroy', $order) }}"
+                  onsubmit="return confirm('Yakin hapus order {{ $order->order_number }}? Tindakan ini tidak bisa dibatalkan.')">
+                @csrf @method('DELETE')
+                <button type="submit" class="text-sm text-red-600 font-medium">Hapus Order</button>
+            </form>
+        </div>
     </div>
 @endsection
