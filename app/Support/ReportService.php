@@ -5,6 +5,8 @@ namespace App\Support;
 use App\Models\Expense;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OtherIncome;
+use App\Models\Setting;
 use Illuminate\Support\Carbon;
 
 class ReportService
@@ -40,6 +42,10 @@ class ReportService
             })
             ->sum('amount');
 
+        $initialCapital = (int) Setting::getValue('initial_capital', 0);
+        $otherIncomeTotal = (int) OtherIncome::query()->sum('amount');
+        $totalCash = $initialCapital + $otherIncomeTotal;
+
         $last7Days = [];
         for ($i = 6; $i >= 0; $i--) {
             $day = $now->copy()->subDays($i);
@@ -59,6 +65,9 @@ class ReportService
             'monthTotal' => $monthTotal,
             'monthCups' => $monthCups,
             'expenseMonthTotal' => $expenseMonthTotal,
+            'initialCapital' => $initialCapital,
+            'otherIncomeTotal' => $otherIncomeTotal,
+            'totalCash' => $totalCash,
             'last7Days' => $last7Days,
         ];
     }

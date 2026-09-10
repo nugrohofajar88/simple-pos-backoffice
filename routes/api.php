@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\ModifierGroupController;
 use App\Http\Controllers\Api\ModifierOptionController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\OtherIncomeController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingController;
@@ -40,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
     Route::get('/expenses', [ExpenseController::class, 'index']);
     Route::post('/expenses', [ExpenseController::class, 'store']);
+    Route::get('/other-incomes', [OtherIncomeController::class, 'index']);
+    Route::post('/other-incomes', [OtherIncomeController::class, 'store']);
     Route::post('/settings', [SettingController::class, 'store']);
 
     Route::get('/reports/summary', [ReportController::class, 'summary']);

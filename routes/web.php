@@ -8,6 +8,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ModifierGroupController;
 use App\Http\Controllers\ModifierOptionController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OtherIncomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    Route::get('/other-incomes', [OtherIncomeController::class, 'index'])->name('other-incomes.index');
+    Route::post('/other-incomes', [OtherIncomeController::class, 'store'])->name('other-incomes.store');
+    Route::delete('/other-incomes/{otherIncome}', [OtherIncomeController::class, 'destroy'])->name('other-incomes.destroy');
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings/token', [SettingController::class, 'generateToken'])->name('settings.token');

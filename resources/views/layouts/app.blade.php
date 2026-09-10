@@ -33,6 +33,7 @@
                         ['route' => 'menu.index', 'label' => 'Menu'],
                         ['route' => 'orders.index', 'label' => 'Riwayat Order'],
                         ['route' => 'expenses.index', 'label' => 'Belanja'],
+                        ['route' => 'other-incomes.index', 'label' => 'Pendapatan Lain'],
                         ['route' => 'settings.index', 'label' => 'Pengaturan'],
                     ];
                 @endphp

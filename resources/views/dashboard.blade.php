@@ -26,6 +26,21 @@
         </div>
     </div>
 
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-lg border p-4">
+            <div class="text-xs text-gray-500 mb-1">Modal Awal</div>
+            <div class="text-xl font-bold">Rp{{ number_format($summary['initialCapital'], 0, ',', '.') }}</div>
+        </div>
+        <a href="{{ route('other-incomes.index') }}" class="bg-white rounded-lg border p-4 hover:bg-gray-50">
+            <div class="text-xs text-gray-500 mb-1">Pendapatan Lain (Total)</div>
+            <div class="text-xl font-bold">Rp{{ number_format($summary['otherIncomeTotal'], 0, ',', '.') }}</div>
+        </a>
+        <div class="bg-gray-900 text-white rounded-lg border p-4">
+            <div class="text-xs text-gray-300 mb-1">Total Cash (Modal + Pendapatan Lain)</div>
+            <div class="text-xl font-bold">Rp{{ number_format($summary['totalCash'], 0, ',', '.') }}</div>
+        </div>
+    </div>
+
     <div class="bg-white rounded-lg border p-4">
         <div class="text-sm font-semibold mb-4">Omzet 7 Hari Terakhir</div>
         @php $max = max(max(array_column($summary['last7Days'], 'total') ?: [0]), 1); @endphp

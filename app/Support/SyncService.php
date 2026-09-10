@@ -9,6 +9,7 @@ use App\Models\ModifierOption;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderItemModifier;
+use App\Models\OtherIncome;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Support\Carbon;
@@ -127,6 +128,33 @@ class SyncService
             ]);
 
             $results[] = ['localId' => $expenseData['localId'] ?? null, 'remoteId' => $expense->id];
+        }
+
+        return $results;
+    }
+
+    public function pullOtherIncomes(?string $since): \Illuminate\Support\Collection
+    {
+        $query = OtherIncome::query()->orderBy('created_at');
+        if ($since) {
+            $query->where('created_at', '>=', Carbon::parse($since));
+        }
+
+        return $query->get();
+    }
+
+    public function pushOtherIncomes(array $incomes): array
+    {
+        $results = [];
+
+        foreach ($incomes as $incomeData) {
+            $income = OtherIncome::query()->create([
+                'description' => $incomeData['description'],
+                'amount' => $incomeData['amount'],
+                'mobile_created_at' => $incomeData['createdAt'] ?? null,
+            ]);
+
+            $results[] = ['localId' => $incomeData['localId'] ?? null, 'remoteId' => $income->id];
         }
 
         return $results;
