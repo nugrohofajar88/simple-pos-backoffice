@@ -69,6 +69,33 @@ class ReportService
             'otherIncomeTotal' => $otherIncomeTotal,
             'totalCash' => $totalCash,
             'last7Days' => $last7Days,
+            'topProducts' => $this->topProducts($startOfMonth),
         ];
+    }
+
+    private function topProducts(Carbon $since): array
+    {
+        $rows = OrderItem::query()
+            ->select('product_name')
+            ->selectRaw('SUM(qty) as total_qty')
+            ->selectRaw('SUM(unit_price * qty) as total_revenue')
+            ->selectRaw('SUM(cost_price * qty) as total_cost')
+            ->whereHas('order', fn ($q) => $q->where('status', 'completed')->where('mobile_created_at', '>=', $since))
+            ->groupBy('product_name')
+            ->orderByDesc('total_qty')
+            ->limit(5)
+            ->get();
+
+        return $rows->map(function ($row) {
+            $revenue = (int) $row->total_revenue;
+            $cost = (int) $row->total_cost;
+
+            return [
+                'name' => $row->product_name,
+                'qty' => (int) $row->total_qty,
+                'revenue' => $revenue,
+                'marginPercent' => $revenue > 0 ? (int) round((($revenue - $cost) / $revenue) * 100) : 0,
+            ];
+        })->all();
     }
 }
