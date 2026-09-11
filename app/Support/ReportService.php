@@ -44,7 +44,8 @@ class ReportService
 
         $initialCapital = (int) Setting::getValue('initial_capital', 0);
         $otherIncomeTotal = (int) OtherIncome::query()->sum('amount');
-        $totalCash = $initialCapital + $otherIncomeTotal;
+        $expenseTotal = (int) Expense::query()->sum('amount');
+        $totalCash = $initialCapital + $otherIncomeTotal - $expenseTotal;
 
         $last7Days = [];
         for ($i = 6; $i >= 0; $i--) {

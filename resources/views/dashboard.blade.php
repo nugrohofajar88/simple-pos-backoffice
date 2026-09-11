@@ -61,7 +61,7 @@
         </a>
         <div class="bg-primary text-on-primary rounded-xl p-space-md shadow-sm">
             <div class="flex items-center justify-between text-primary-fixed-dim mb-space-xs">
-                <span class="font-label-md text-label-md uppercase tracking-wider">Total Cash (Modal + Pendapatan Lain)</span>
+                <span class="font-label-md text-label-md uppercase tracking-wider">Total Cash (Modal + Pendapatan Lain - Belanja)</span>
                 <span class="material-symbols-outlined text-secondary-fixed-dim text-title-lg">account_balance_wallet</span>
             </div>
             <div class="font-metric-display text-metric-display">Rp{{ number_format($summary['totalCash'], 0, ',', '.') }}</div>
