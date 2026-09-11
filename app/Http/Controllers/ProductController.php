@@ -22,9 +22,10 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'base_price' => ['required', 'integer', 'min:0'],
             'cost_price' => ['nullable', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $this->menu->createProduct($data);
+        $this->menu->createProduct($data, $request->file('image'));
 
         return back()->with('status', 'Produk ditambahkan.');
     }
@@ -46,9 +47,16 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'base_price' => ['required', 'integer', 'min:0'],
             'cost_price' => ['nullable', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'remove_image' => ['nullable', 'boolean'],
         ]);
 
-        $this->menu->updateProduct($product, $data);
+        $this->menu->updateProduct(
+            $product,
+            $data,
+            $request->file('image'),
+            $request->boolean('remove_image')
+        );
 
         return back()->with('status', 'Produk diperbarui.');
     }

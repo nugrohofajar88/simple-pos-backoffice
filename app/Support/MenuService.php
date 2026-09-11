@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\ModifierGroup;
 use App\Models\ModifierOption;
 use App\Models\Product;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class MenuService
 {
@@ -34,25 +36,43 @@ class MenuService
         $category->delete();
     }
 
-    public function createProduct(array $data): Product
+    public function createProduct(array $data, ?UploadedFile $image = null): Product
     {
         return Product::query()->create([
             'category_id' => $data['category_id'],
             'name' => $data['name'],
             'base_price' => $data['base_price'],
             'cost_price' => $data['cost_price'] ?? 0,
+            'image_path' => $image ? Storage::disk('public')->putFile('products', $image) : null,
             'is_active' => $data['is_active'] ?? true,
             'sort_order' => $data['sort_order'] ?? 0,
         ]);
     }
 
-    public function updateProduct(Product $product, array $data): Product
-    {
+    public function updateProduct(
+        Product $product,
+        array $data,
+        ?UploadedFile $image = null,
+        bool $removeImage = false
+    ): Product {
+        $imagePath = $product->image_path;
+
+        if ($image) {
+            if ($imagePath) {
+                Storage::disk('public')->delete($imagePath);
+            }
+            $imagePath = Storage::disk('public')->putFile('products', $image);
+        } elseif ($removeImage && $imagePath) {
+            Storage::disk('public')->delete($imagePath);
+            $imagePath = null;
+        }
+
         $product->update([
             'category_id' => $data['category_id'] ?? $product->category_id,
             'name' => $data['name'] ?? $product->name,
             'base_price' => $data['base_price'] ?? $product->base_price,
             'cost_price' => $data['cost_price'] ?? $product->cost_price,
+            'image_path' => $imagePath,
             'is_active' => $data['is_active'] ?? $product->is_active,
             'sort_order' => $data['sort_order'] ?? $product->sort_order,
         ]);

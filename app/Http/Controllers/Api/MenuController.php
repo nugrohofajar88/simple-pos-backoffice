@@ -34,6 +34,7 @@ class MenuController extends Controller
                     'name' => $p->name,
                     'basePrice' => $p->base_price,
                     'costPrice' => $p->cost_price,
+                    'imageUrl' => $p->image_url,
                     'isActive' => $p->is_active,
                     'sortOrder' => $p->sort_order,
                 ]),

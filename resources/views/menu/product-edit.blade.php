@@ -15,7 +15,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white border rounded-lg p-4">
             <h2 class="font-semibold text-sm mb-3">Info Produk</h2>
-            <form method="POST" action="{{ route('menu.products.update', $product) }}" class="space-y-3">
+            <form method="POST" action="{{ route('menu.products.update', $product) }}" enctype="multipart/form-data" class="space-y-3">
                 @csrf @method('PUT')
                 <div>
                     <label class="block text-xs font-medium mb-1">Kategori</label>
@@ -38,6 +38,16 @@
                         <label class="block text-xs font-medium mb-1">HPP</label>
                         <input type="number" name="cost_price" value="{{ $product->cost_price }}" min="0" class="w-full rounded border border-gray-300 px-3 py-2 text-sm">
                     </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium mb-1">Gambar</label>
+                    @if ($product->image_url)
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded border mb-2">
+                        <label class="flex items-center gap-1 text-xs mb-2">
+                            <input type="checkbox" name="remove_image" value="1"> Hapus gambar saat ini
+                        </label>
+                    @endif
+                    <input type="file" name="image" accept="image/*" class="w-full text-sm">
                 </div>
                 <button type="submit" class="bg-gray-900 text-white text-sm px-4 py-2 rounded">Simpan Perubahan</button>
             </form>

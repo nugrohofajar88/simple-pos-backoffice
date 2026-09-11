@@ -22,6 +22,7 @@ class ProductController extends Controller
             'name' => $product->name,
             'basePrice' => $product->base_price,
             'costPrice' => $product->cost_price,
+            'imageUrl' => $product->image_url,
             'isActive' => $product->is_active,
             'sortOrder' => $product->sort_order,
         ];
@@ -34,9 +35,10 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'base_price' => ['required', 'integer', 'min:0'],
             'cost_price' => ['nullable', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $product = $this->menu->createProduct($data);
+        $product = $this->menu->createProduct($data, $request->file('image'));
 
         return response()->json(['data' => $this->toJson($product)], 201);
     }
@@ -48,9 +50,16 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'base_price' => ['required', 'integer', 'min:0'],
             'cost_price' => ['nullable', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'remove_image' => ['nullable', 'boolean'],
         ]);
 
-        $product = $this->menu->updateProduct($product, $data);
+        $product = $this->menu->updateProduct(
+            $product,
+            $data,
+            $request->file('image'),
+            $request->boolean('remove_image')
+        );
 
         return response()->json(['data' => $this->toJson($product)]);
     }
