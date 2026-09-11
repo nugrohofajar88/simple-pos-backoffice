@@ -5,7 +5,7 @@
 @section('content')
     <a href="{{ route('orders.index') }}" class="font-label-lg text-label-lg text-on-surface-variant mb-4 inline-block">&larr; Kembali ke Riwayat</a>
 
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 max-w-xl">
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4 max-w-xl">
         <h1 class="font-title-lg text-title-lg font-bold text-on-surface">{{ $order->order_number }}</h1>
         <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $order->mobile_created_at->translatedFormat('d M Y H:i') }}</p>
         @if ($order->customer_name)

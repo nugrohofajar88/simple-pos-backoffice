@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="font-headline-sm text-headline-sm text-primary mb-4">Riwayat Order</h1>
 
-    <form method="GET" action="{{ route('orders.index') }}" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-4 flex flex-col sm:flex-row gap-3 sm:items-end">
+    <form method="GET" action="{{ route('orders.index') }}" class="bg-surface-container-lowest rounded-xl shadow-sm p-4 mb-4 flex flex-col sm:flex-row gap-3 sm:items-end">
         <div>
             <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Dari Tanggal</label>
             <input type="date" name="from" value="{{ $from }}" class="rounded-lg border border-outline-variant px-3 py-2 text-body-md">
@@ -15,14 +15,16 @@
             <input type="date" name="to" value="{{ $to }}" class="rounded-lg border border-outline-variant px-3 py-2 text-body-md">
         </div>
         <div class="flex gap-2">
-            <button type="submit" class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-lg">Filter</button>
+            <button type="submit" class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                <span class="material-symbols-outlined text-title-md">filter_alt</span> Filter
+            </button>
             @if ($from || $to)
                 <a href="{{ route('orders.index') }}" class="font-label-lg text-label-lg text-on-surface-variant px-2 py-2">Reset</a>
             @endif
         </div>
     </form>
 
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-x-auto">
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-x-auto">
         <table class="w-full text-body-md min-w-[640px]">
             <thead class="bg-surface-container-low text-left font-label-sm text-label-sm text-on-surface-variant">
                 <tr>

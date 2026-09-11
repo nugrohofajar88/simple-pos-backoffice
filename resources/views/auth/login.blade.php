@@ -7,7 +7,8 @@
     @include('layouts.tailwind-config')
 </head>
 <body class="bg-surface min-h-screen flex items-center justify-center font-body-md text-body-md text-on-surface">
-    <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-[0_1px_8px_rgba(0,0,0,0.08)] p-6">
+    <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-md p-6">
+        <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center font-title-lg text-title-lg font-bold text-secondary-fixed-dim mx-auto mb-3">K</div>
         <h1 class="font-headline-sm text-headline-sm text-primary mb-4 text-center">{{ config('app.name') }}</h1>
 
         @if ($errors->any())
@@ -29,8 +30,8 @@
                        class="w-full rounded-lg border border-outline-variant px-3 py-2 text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container">
             </div>
             <button type="submit"
-                    class="w-full rounded-lg bg-primary text-on-primary py-2 font-label-lg text-label-lg hover:opacity-90">
-                Masuk
+                    class="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary text-on-primary py-2 font-label-lg text-label-lg hover:opacity-90">
+                <span class="material-symbols-outlined text-title-md">login</span> Masuk
             </button>
         </form>
     </div>

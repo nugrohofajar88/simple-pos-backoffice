@@ -7,7 +7,9 @@
         <div class="flex items-center justify-between mb-4">
             <h1 class="font-headline-sm text-headline-sm text-primary">Belanja</h1>
             <button @click="$refs.newExpenseForm.classList.toggle('hidden')"
-                    class="bg-primary text-on-primary font-label-lg text-label-lg px-3 py-2 rounded-lg">+ Tambah</button>
+                    class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-3 py-2 rounded-xl shadow-sm">
+                <span class="material-symbols-outlined text-title-md">add</span> Tambah
+            </button>
         </div>
 
         @if ($errors->any())
@@ -17,7 +19,7 @@
         @endif
 
         <form x-ref="newExpenseForm" method="POST" action="{{ route('expenses.store') }}"
-              class="hidden bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col sm:flex-row gap-2 sm:items-end">
+              class="hidden bg-surface-container-lowest rounded-xl shadow-sm p-4 flex flex-col sm:flex-row gap-2 sm:items-end">
             @csrf
             <div class="flex-1">
                 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Keterangan</label>
@@ -27,11 +29,13 @@
                 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Jumlah (Rp)</label>
                 <input type="number" name="amount" required min="1" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-body-md">
             </div>
-            <button type="submit" class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-lg">Simpan</button>
+            <button type="submit" class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                <span class="material-symbols-outlined text-title-md">save</span> Simpan
+            </button>
         </form>
     </div>
 
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-x-auto">
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-x-auto">
         <table class="w-full text-body-md min-w-[560px]">
             <thead class="bg-surface-container-low text-left font-label-sm text-label-sm text-on-surface-variant">
                 <tr>

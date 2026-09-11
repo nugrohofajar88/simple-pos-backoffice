@@ -6,14 +6,14 @@
     <h1 class="font-headline-sm text-headline-sm text-primary mb-4">Pengaturan</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
             <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-3">Info dari Mobile</h2>
             <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Nama toko &amp; modal awal dikelola dari app mobile, di sini cuma tampilan (ikut ke-sync otomatis).</p>
             <div class="font-body-md text-body-md mb-2"><span class="text-on-surface-variant">Nama Toko:</span> <span class="font-medium text-on-surface">{{ $storeName }}</span></div>
             <div class="font-body-md text-body-md"><span class="text-on-surface-variant">Modal Awal:</span> <span class="font-medium text-on-surface">Rp{{ number_format($initialCapital, 0, ',', '.') }}</span></div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
             <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-3">Token Sinkronisasi Mobile</h2>
 
             @if (session('plainToken'))
@@ -30,7 +30,8 @@
             <form method="POST" action="{{ route('settings.token') }}"
                   onsubmit="return {{ $hasToken ? "confirm('Token lama akan nonaktif, lanjutkan?')" : 'true' }}">
                 @csrf
-                <button type="submit" class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-lg">
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                    <span class="material-symbols-outlined text-title-md">key</span>
                     {{ $hasToken ? 'Generate Ulang Token' : 'Generate Token' }}
                 </button>
             </form>

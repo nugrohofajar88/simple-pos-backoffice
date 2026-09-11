@@ -7,11 +7,13 @@
         <div class="flex items-center justify-between mb-4">
             <h1 class="font-headline-sm text-headline-sm text-primary">Kelola Menu</h1>
             <button @click="$refs.newCategoryForm.classList.toggle('hidden')"
-                    class="bg-primary text-on-primary font-label-lg text-label-lg px-3 py-2 rounded-lg">+ Kategori</button>
+                    class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-3 py-2 rounded-xl shadow-sm">
+                <span class="material-symbols-outlined text-title-md">add</span> Kategori
+            </button>
         </div>
 
         <form x-ref="newCategoryForm" method="POST" action="{{ route('menu.categories.store') }}"
-              class="hidden bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex gap-2 items-end">
+              class="hidden bg-surface-container-lowest rounded-xl shadow-sm p-4 flex gap-2 items-end">
             @csrf
             <div class="flex-1">
                 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Nama Kategori</label>
@@ -29,7 +31,7 @@
 
     <div class="space-y-4">
         @forelse ($categories as $category)
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden" x-data="{ editCat: false, addProduct: false }">
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden" x-data="{ editCat: false, addProduct: false }">
                 <div class="bg-surface-container-low border-b border-outline-variant px-4 py-3 flex items-center justify-between">
                     <span class="font-semibold text-on-surface" x-show="!editCat" @click="editCat = true">{{ $category->name }}</span>
 
@@ -50,9 +52,9 @@
                     @forelse ($category->products as $product)
                         <a href="{{ route('menu.products.edit', $product) }}" class="flex items-center gap-3 px-4 py-2 text-body-sm hover:bg-surface-container-low">
                             @if ($product->image_url)
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-8 h-8 rounded object-cover">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-8 h-8 rounded-lg object-cover">
                             @else
-                                <span class="w-8 h-8 rounded bg-surface-container-low border border-outline-variant"></span>
+                                <span class="w-8 h-8 rounded-lg bg-surface-container-low border border-outline-variant"></span>
                             @endif
                             <span class="flex-1 text-on-surface">{{ $product->name }}</span>
                             <span class="text-on-surface-variant">Rp{{ number_format($product->base_price, 0, ',', '.') }}</span>
@@ -63,7 +65,9 @@
                 </div>
 
                 <div class="px-4 py-3">
-                    <button @click="addProduct = !addProduct" class="font-label-sm text-label-sm text-primary font-medium">+ Produk di {{ $category->name }}</button>
+                    <button @click="addProduct = !addProduct" class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary font-medium">
+                        <span class="material-symbols-outlined text-title-md">add</span> Produk di {{ $category->name }}
+                    </button>
                     <form x-show="addProduct" method="POST" action="{{ route('menu.products.store') }}" enctype="multipart/form-data" class="mt-2 flex flex-col sm:flex-row gap-2 sm:items-end">
                         @csrf
                         <input type="hidden" name="category_id" value="{{ $category->id }}">

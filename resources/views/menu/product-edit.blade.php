@@ -13,7 +13,7 @@
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
             <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-3">Info Produk</h2>
             <form method="POST" action="{{ route('menu.products.update', $product) }}" enctype="multipart/form-data" class="space-y-3">
                 @csrf @method('PUT')
@@ -49,7 +49,9 @@
                     @endif
                     <input type="file" name="image" accept="image/*" class="w-full text-body-sm">
                 </div>
-                <button type="submit" class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-lg">Simpan Perubahan</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                    <span class="material-symbols-outlined text-title-md">save</span> Simpan Perubahan
+                </button>
             </form>
 
             <form method="POST" action="{{ route('menu.products.destroy', $product) }}" class="mt-4 pt-4 border-t border-outline-variant"
@@ -59,7 +61,7 @@
             </form>
         </div>
 
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
             <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-3">Modifier</h2>
 
             <div class="space-y-4">
@@ -155,7 +157,9 @@
                     <label class="flex items-center gap-1"><input type="checkbox" name="is_required" value="1"> Wajib dipilih</label>
                 </div>
                 <input type="hidden" name="selection_type" value="single">
-                <button type="submit" class="bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-lg">Tambah Grup</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                    <span class="material-symbols-outlined text-title-md">add</span> Tambah Grup
+                </button>
             </form>
         </div>
     </div>
