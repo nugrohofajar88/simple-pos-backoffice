@@ -7,9 +7,10 @@
     @include('layouts.tailwind-config')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
+@php $storeName = \App\Models\Setting::getValue('store_name') ?: config('app.name'); @endphp
 <body class="bg-surface font-body-md text-body-md text-on-surface antialiased" x-data="{ sidebarOpen: false }">
     <div class="md:hidden flex items-center justify-between bg-primary-container text-surface-bright px-4 py-3 sticky top-0 z-20">
-        <span class="font-title-md text-title-md font-bold">{{ config('app.name') }}</span>
+        <span class="font-title-md text-title-md font-bold">{{ $storeName }}</span>
         <button @click="sidebarOpen = true" class="p-1 material-symbols-outlined" aria-label="Buka menu">menu</button>
     </div>
 
@@ -22,9 +23,9 @@
         class="fixed inset-y-0 left-0 z-40 w-64 bg-primary-container text-surface-bright flex flex-col justify-between transform transition-transform duration-200 ease-in-out md:translate-x-0 shadow-[0_1px_8px_rgba(0,0,0,0.2)]">
         <div class="flex flex-col min-h-0 overflow-y-auto">
             <div class="h-16 px-space-md flex items-center gap-space-sm bg-primary/40 shrink-0">
-                <div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center font-title-md text-title-md font-bold text-on-secondary shrink-0">K</div>
+                <div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center font-title-md text-title-md font-bold text-on-secondary shrink-0">{{ strtoupper(substr($storeName, 0, 1)) }}</div>
                 <div class="flex flex-col min-w-0">
-                    <span class="font-title-md text-title-md font-bold tracking-tight text-surface-container-lowest leading-none truncate">KopiKala</span>
+                    <span class="font-title-md text-title-md font-bold tracking-tight text-surface-container-lowest leading-none truncate">{{ $storeName }}</span>
                     <span class="font-label-sm text-label-sm text-secondary-fixed-dim uppercase tracking-wider truncate">POS Back-Office</span>
                 </div>
                 <button @click="sidebarOpen = false" class="md:hidden material-symbols-outlined ml-auto" aria-label="Tutup menu">close</button>

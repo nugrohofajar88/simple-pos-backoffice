@@ -6,10 +6,11 @@
     <title>Login — {{ config('app.name') }}</title>
     @include('layouts.tailwind-config')
 </head>
+@php $storeName = \App\Models\Setting::getValue('store_name') ?: config('app.name'); @endphp
 <body class="bg-surface min-h-screen flex items-center justify-center font-body-md text-body-md text-on-surface">
     <div class="w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-md p-6">
-        <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center font-title-lg text-title-lg font-bold text-secondary-fixed-dim mx-auto mb-3">K</div>
-        <h1 class="font-headline-sm text-headline-sm text-primary mb-4 text-center">{{ config('app.name') }}</h1>
+        <div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center font-title-lg text-title-lg font-bold text-secondary-fixed-dim mx-auto mb-3">{{ strtoupper(substr($storeName, 0, 1)) }}</div>
+        <h1 class="font-headline-sm text-headline-sm text-primary mb-4 text-center">{{ $storeName }}</h1>
 
         @if ($errors->any())
             <div class="mb-4 rounded-lg border border-error bg-error-container px-4 py-2 font-body-sm text-body-sm text-on-error-container">
