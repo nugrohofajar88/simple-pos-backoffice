@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') — {{ config('app.name') }}</title>
     @include('layouts.tailwind-config')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-surface font-body-md text-body-md text-on-surface antialiased" x-data="{ sidebarOpen: false }">
     <div class="md:hidden flex items-center justify-between bg-primary-container text-surface-bright px-4 py-3 sticky top-0 z-20">
