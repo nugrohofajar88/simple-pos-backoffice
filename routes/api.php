@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ModifierOptionController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OtherIncomeController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\PublicOrderController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingController;
 use Illuminate\Http\Request;
@@ -16,6 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// PUBLIK (tanpa auth:sanctum) - dipakai situs self-order pelanggan (pesenkopi).
+// Throttle ketat krn siapa saja bisa akses tanpa token.
+Route::prefix('public')->middleware('throttle:20,1')->group(function () {
+    Route::get('/menu', [PublicOrderController::class, 'menu']);
+    Route::post('/orders', [PublicOrderController::class, 'store']);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/menu', [MenuController::class, 'index']);

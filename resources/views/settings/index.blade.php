@@ -38,6 +38,22 @@
         </div>
     </div>
 
+    <div class="mt-6 bg-surface-container-lowest rounded-xl shadow-sm p-4">
+        <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-1">Notifikasi WA Pesanan Tamu</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">No. WA admin/barista yang dikabari otomatis setiap ada pesanan baru dari situs self-order.</p>
+        <form method="POST" action="{{ route('settings.admin-whatsapp') }}" class="flex flex-col sm:flex-row gap-2 max-w-md">
+            @csrf
+            <input type="text" name="admin_whatsapp" value="{{ old('admin_whatsapp', $adminWhatsapp) }}" placeholder="08123456789"
+                   class="flex-1 rounded-lg border border-outline-variant px-3 py-2 text-body-md">
+            <button type="submit" class="inline-flex items-center justify-center gap-1.5 bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl">
+                Simpan
+            </button>
+        </form>
+        @error('admin_whatsapp')
+            <p class="font-body-sm text-body-sm text-error mt-2">{{ $message }}</p>
+        @enderror
+    </div>
+
     <div class="mt-6 bg-surface-container-lowest border border-error rounded-xl p-4">
         <h2 class="font-title-md text-title-md font-semibold text-error mb-2">Zona Berbahaya</h2>
         <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">

@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 class OrderCreationService
 {
     /**
-     * @param  array{paymentMethod:string,customerName?:?string,note?:?string,items:array<int,array{productId:int,qty:int,note?:?string,modifierOptionIds?:array<int,int>}>}  $data
+     * @param  array{paymentMethod:string,customerName?:?string,customerPhone?:?string,note?:?string,source?:string,status?:string,fulfillmentMethod?:string,deliveryAddress?:?string,items:array<int,array{productId:int,qty:int,note?:?string,modifierOptionIds?:array<int,int>}>}  $data
      */
     public function create(array $data): Order
     {
@@ -25,7 +25,13 @@ class OrderCreationService
             throw ValidationException::withMessages(['items' => 'Keranjang masih kosong.']);
         }
 
-        return DB::transaction(function () use ($data) {
+        // Default = perilaku kasir admin yang sudah ada (order langsung completed).
+        // Order tamu (self-order) kirim source=app, status=pending_confirmation eksplisit.
+        $source = $data['source'] ?? 'admin';
+        $status = $data['status'] ?? 'completed';
+        $fulfillmentMethod = $data['fulfillmentMethod'] ?? 'pickup';
+
+        return DB::transaction(function () use ($data, $source, $status, $fulfillmentMethod) {
             $now = now();
             $subtotal = 0;
             $prepared = [];
@@ -78,12 +84,16 @@ class OrderCreationService
             }
 
             $order = Order::query()->create([
-                'order_number' => $this->generateOrderNumber(),
-                'status' => 'completed',
+                'order_number' => $this->generateOrderNumber($source),
+                'status' => $status,
+                'source' => $source,
                 'customer_name' => $data['customerName'] ?? null,
+                'customer_phone' => $data['customerPhone'] ?? null,
                 'subtotal' => $subtotal,
                 'total' => $subtotal,
                 'payment_method' => $data['paymentMethod'],
+                'fulfillment_method' => $fulfillmentMethod,
+                'delivery_address' => $data['deliveryAddress'] ?? null,
                 'note' => $data['note'] ?? null,
                 'mobile_created_at' => $now,
             ]);
@@ -113,9 +123,11 @@ class OrderCreationService
         });
     }
 
-    private function generateOrderNumber(): string
+    /** Kode sumber di nomor order: WEB (kasir admin), APP (self-order tamu). */
+    private function generateOrderNumber(string $source): string
     {
-        $prefix = 'ORD-'.now()->format('Ymd').'-WEB-';
+        $code = $source === 'app' ? 'APP' : 'WEB';
+        $prefix = 'ORD-'.now()->format('Ymd')."-{$code}-";
 
         for ($attempt = 0; $attempt < 5; $attempt++) {
             $count = Order::query()->where('order_number', 'like', $prefix.'%')->count();

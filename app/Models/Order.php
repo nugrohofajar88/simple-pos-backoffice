@@ -13,18 +13,25 @@ class Order extends Model
     protected $fillable = [
         'order_number',
         'status',
+        'source',
         'customer_name',
+        'customer_phone',
         'subtotal',
         'total',
         'payment_method',
+        'fulfillment_method',
+        'delivery_address',
+        'delivery_fee',
         'note',
         'mobile_created_at',
+        'confirmed_at',
     ];
 
     protected function casts(): array
     {
         return [
             'mobile_created_at' => 'datetime',
+            'confirmed_at' => 'datetime',
         ];
     }
 

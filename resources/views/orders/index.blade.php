@@ -5,6 +5,17 @@
 @section('content')
     <h1 class="font-headline-sm text-headline-sm text-primary mb-4">Riwayat Order</h1>
 
+    @if ($pendingConfirmationCount > 0)
+        <a href="{{ route('orders.index', ['status' => 'pending_confirmation']) }}"
+           class="mb-6 flex items-center justify-between gap-3 rounded-xl bg-secondary-container px-4 py-3 shadow-sm hover:opacity-90">
+            <span class="flex items-center gap-2 font-label-lg text-label-lg font-semibold text-on-secondary-container">
+                <span class="material-symbols-outlined text-title-lg">notifications_active</span>
+                {{ $pendingConfirmationCount }} pesanan tamu menunggu konfirmasi
+            </span>
+            <span class="font-label-md text-label-md text-on-secondary-container">Lihat &rarr;</span>
+        </a>
+    @endif
+
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
             <div class="flex flex-col">
@@ -75,6 +86,8 @@
                 <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Status</label>
                 <select name="status" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-body-md">
                     <option value="">Semua Status</option>
+                    <option value="pending_confirmation" @selected($status === 'pending_confirmation')>Menunggu Konfirmasi</option>
+                    <option value="confirmed" @selected($status === 'confirmed')>Dikonfirmasi</option>
                     <option value="completed" @selected($status === 'completed')>Selesai</option>
                     <option value="voided" @selected($status === 'voided')>Dibatalkan</option>
                 </select>
@@ -120,11 +133,15 @@
                         <td class="px-4 py-2 text-on-surface-variant truncate max-w-[220px]">{{ $itemPreview }}{{ $itemMore }}</td>
                         <td class="px-4 py-2 text-on-surface">{{ ucfirst($order->payment_method) }}</td>
                         <td class="px-4 py-2">
-                            @if ($order->status === 'completed')
-                                <span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed-variant px-2 py-0.5 rounded-full font-semibold">Selesai</span>
-                            @else
-                                <span class="font-label-sm text-label-sm bg-error-container text-on-error-container px-2 py-0.5 rounded-full font-semibold">Dibatalkan</span>
-                            @endif
+                            @php
+                                $statusBadge = match ($order->status) {
+                                    'pending_confirmation' => ['bg-secondary-container text-on-secondary-container', 'Menunggu Konfirmasi'],
+                                    'confirmed' => ['bg-primary-container text-on-primary-container', 'Dikonfirmasi'],
+                                    'completed' => ['bg-tertiary-fixed text-on-tertiary-fixed-variant', 'Selesai'],
+                                    default => ['bg-error-container text-on-error-container', 'Dibatalkan'],
+                                };
+                            @endphp
+                            <span class="font-label-sm text-label-sm {{ $statusBadge[0] }} px-2 py-0.5 rounded-full font-semibold whitespace-nowrap">{{ $statusBadge[1] }}</span>
                         </td>
                         <td class="px-4 py-2 text-right text-on-surface-variant">Rp{{ number_format($hpp, 0, ',', '.') }}</td>
                         <td class="px-4 py-2 text-right">

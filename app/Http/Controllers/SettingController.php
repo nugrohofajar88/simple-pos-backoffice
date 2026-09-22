@@ -30,7 +30,20 @@ class SettingController extends Controller
             'storeName' => Setting::getValue('store_name', '-'),
             'initialCapital' => (int) Setting::getValue('initial_capital', 0),
             'hasToken' => auth()->user()->tokens()->where('name', 'mobile-sync')->exists(),
+            'adminWhatsapp' => Setting::getValue('admin_whatsapp', ''),
         ]);
+    }
+
+    /** No. WA admin/barista - tujuan notifikasi otomatis saat pesanan tamu (self-order) masuk. */
+    public function updateAdminWhatsapp(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'admin_whatsapp' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s]*$/'],
+        ]);
+
+        Setting::setValue('admin_whatsapp', trim((string) ($validated['admin_whatsapp'] ?? '')));
+
+        return back()->with('status', 'Nomor WA admin berhasil disimpan.');
     }
 
     public function generateToken(Request $request): RedirectResponse

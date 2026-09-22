@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    Route::post('/orders/{order}/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
+    Route::post('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+    Route::post('/orders/{order}/reject', [OrderController::class, 'reject'])->name('orders.reject');
 
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
@@ -59,5 +62,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings/token', [SettingController::class, 'generateToken'])->name('settings.token');
+    Route::post('/settings/admin-whatsapp', [SettingController::class, 'updateAdminWhatsapp'])->name('settings.admin-whatsapp');
     Route::post('/settings/reset', [SettingController::class, 'resetData'])->name('settings.reset');
 });
