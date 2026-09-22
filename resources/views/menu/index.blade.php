@@ -116,7 +116,12 @@
                                     <span class="w-10 h-10 rounded-lg bg-surface-container-low border border-outline-variant shrink-0"></span>
                                 @endif
                                 <div class="flex-1 min-w-0">
-                                    <div class="font-title-md text-title-md font-medium text-on-surface truncate">{{ $product->name }}</div>
+                                    <div class="font-title-md text-title-md font-medium text-on-surface truncate flex items-center gap-1.5">
+                                        <span class="truncate">{{ $product->name }}</span>
+                                        @if ($product->recipe_note)
+                                            <span class="material-symbols-outlined text-title-sm text-secondary shrink-0" title="Resep sudah diisi">receipt_long</span>
+                                        @endif
+                                    </div>
                                     <div class="font-body-sm text-body-sm text-on-surface-variant truncate">
                                         HPP Rp{{ number_format($product->cost_price, 0, ',', '.') }}
                                         @if ($product->modifierGroups->isNotEmpty())

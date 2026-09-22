@@ -40,6 +40,12 @@
                     </div>
                 </div>
                 <div>
+                    <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Resep / Cara Racik (opsional)</label>
+                    <textarea name="recipe_note" rows="4" placeholder="mis. 1 shot espresso, 150ml susu steam, gula aren 15ml..."
+                              class="w-full rounded-lg border border-outline-variant px-3 py-2 text-body-md">{{ $product->recipe_note }}</textarea>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Muncul di app kasir saat pegawai pilih menu ini - buat bantu pegawai baru racik.</p>
+                </div>
+                <div>
                     <label class="block font-label-md text-label-md text-on-surface-variant mb-1">Gambar</label>
                     @if ($product->image_url)
                         <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-24 h-24 object-cover rounded-lg border border-outline-variant mb-2">

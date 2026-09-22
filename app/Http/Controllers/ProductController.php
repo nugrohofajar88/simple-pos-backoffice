@@ -23,6 +23,7 @@ class ProductController extends Controller
             'base_price' => ['required', 'integer', 'min:0'],
             'cost_price' => ['nullable', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'max:2048'],
+            'recipe_note' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $this->menu->createProduct($data, $request->file('image'));
@@ -49,6 +50,7 @@ class ProductController extends Controller
             'cost_price' => ['nullable', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'max:2048'],
             'remove_image' => ['nullable', 'boolean'],
+            'recipe_note' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $this->menu->updateProduct(

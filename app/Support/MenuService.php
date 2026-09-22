@@ -44,6 +44,7 @@ class MenuService
             'base_price' => $data['base_price'],
             'cost_price' => $data['cost_price'] ?? 0,
             'image_path' => $image ? Storage::disk('public')->putFile('products', $image) : null,
+            'recipe_note' => $data['recipe_note'] ?? null,
             'is_active' => $data['is_active'] ?? true,
             'sort_order' => $data['sort_order'] ?? 0,
         ]);
@@ -73,6 +74,7 @@ class MenuService
             'base_price' => $data['base_price'] ?? $product->base_price,
             'cost_price' => $data['cost_price'] ?? $product->cost_price,
             'image_path' => $imagePath,
+            'recipe_note' => array_key_exists('recipe_note', $data) ? $data['recipe_note'] : $product->recipe_note,
             'is_active' => $data['is_active'] ?? $product->is_active,
             'sort_order' => $data['sort_order'] ?? $product->sort_order,
         ]);

@@ -19,6 +19,7 @@ class Product extends Model
         'base_price',
         'cost_price',
         'image_path',
+        'recipe_note',
         'is_active',
         'sort_order',
     ];
