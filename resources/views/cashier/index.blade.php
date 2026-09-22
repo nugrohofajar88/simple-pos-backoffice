@@ -286,11 +286,6 @@
                             <button type="button" @click="closePicker()" class="material-symbols-outlined text-title-lg text-on-surface-variant">close</button>
                         </div>
 
-                        <div x-show="pickerProduct.recipe_note" class="bg-surface-container-low rounded-lg p-3">
-                            <div class="font-label-sm text-label-sm font-semibold text-on-surface mb-1">📋 Resep / Cara Racik</div>
-                            <div class="font-body-sm text-body-sm text-on-surface-variant whitespace-pre-line" x-text="pickerProduct.recipe_note"></div>
-                        </div>
-
                         <template x-for="group in pickerProduct.modifier_groups" :key="group.id">
                             <div>
                                 <div class="font-label-lg text-label-lg font-medium text-on-surface mb-1.5">
