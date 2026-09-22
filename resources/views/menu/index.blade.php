@@ -104,7 +104,8 @@
                         @forelse ($category->products as $product)
                             @php
                                 $hasCost = $product->cost_price > 0 && $product->base_price > 0;
-                                $margin = $hasCost ? round((($product->base_price - $product->cost_price) / $product->base_price) * 100) : null;
+                                $profit = $hasCost ? $product->base_price - $product->cost_price : null;
+                                $margin = $hasCost ? round(($profit / $product->base_price) * 100) : null;
                             @endphp
                             <a href="{{ route('menu.products.edit', $product) }}"
                                data-name="{{ Str::lower($product->name) }}"
@@ -131,7 +132,8 @@
                                 </div>
                                 <div class="text-right shrink-0">
                                     <div class="font-title-md text-title-md font-semibold text-primary">Rp{{ number_format($product->base_price, 0, ',', '.') }}</div>
-                                    @if ($margin !== null)
+                                    @if ($profit !== null)
+                                        <div class="font-body-sm text-body-sm text-on-surface-variant">Untung Rp{{ number_format($profit, 0, ',', '.') }}</div>
                                         <span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed-variant px-1.5 py-0.5 rounded-full font-bold">{{ $margin }}%</span>
                                     @endif
                                 </div>
