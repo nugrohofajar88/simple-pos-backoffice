@@ -35,6 +35,7 @@
                 <nav class="flex flex-col gap-1">
                     @php
                         $navItems = [
+                            ['route' => 'cashier.index', 'label' => 'Kasir', 'icon' => 'point_of_sale'],
                             ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'menu.index', 'label' => 'Menu', 'icon' => 'coffee'],
                             ['route' => 'orders.index', 'label' => 'Riwayat Order', 'icon' => 'receipt'],
