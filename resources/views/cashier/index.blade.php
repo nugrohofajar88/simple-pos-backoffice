@@ -5,7 +5,7 @@
 @section('content')
     <div
         x-data="{
-            categories: @json($categories),
+            categories: @js($categories),
             cart: [],
             activeCategoryId: null,
             paymentMethod: 'Cash',
