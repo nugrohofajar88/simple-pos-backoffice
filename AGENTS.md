@@ -47,3 +47,23 @@ Wajib cron OS: **`* * * * * php artisan schedule:run`** (tiap menit; jadwal deta
 `git pull` → `composer install --no-dev --optimize-autoloader` (lihat workaround proc_open di atas kalau hang di post-script) → `php artisan migrate --force` → `php artisan config:clear`.
 Produksi: `APP_ENV=production`, `APP_DEBUG=false`.
 `.env` gitignored — jangan commit secret; kalau perlu berbagi, sensor nilainya.
+
+## Pindah hosting/domain
+
+Kodenya di GitHub, jadi bagian tersulit pindah host cuma **data** (database + file upload) dan **konfigurasi ulang**. Urutan:
+
+1. **Clone kode** ke host baru: `git clone <repo>`, lalu `composer install --no-dev --optimize-autoloader` (lihat workaround proc_open di atas kalau host baru juga mematikannya).
+2. **Restore database.** Backup harian sudah otomatis ke Google Drive lewat `db:backup` (lihat bagian Backup di atas) — unduh file `.sql.gz` terbaru dari folder `GOOGLE_DRIVE_FOLDER`, lalu:
+   ```bash
+   gunzip -c backup-file.sql.gz | mysql -u <user> -p <database_baru>
+   ```
+   **Catatan penting**: `db:backup` cuma dump database, **TIDAK termasuk file upload** (lihat poin 3) — jangan asumsikan file foto produk ikut ter-backup lewat jalur ini.
+3. **Salin file upload** (`storage/app/public/products` — foto produk) manual dari host lama, mis. `rsync`/`scp`/download-upload via cPanel File Manager. Ini satu-satunya data yang TIDAK ter-backup otomatis di mana pun — jangan lupa sebelum host lama non-aktif.
+4. **Buat `.env` baru**: salin dari host lama (kredensial DB baru, `APP_URL` baru, `GOOGLE_DRIVE_*`, `FONNTE_TOKEN`/`WABLAS_*` kalau dipakai) → `php artisan key:generate` HANYA kalau `.env` benar-benar baru dari nol (jangan generate ulang kalau APP_KEY lama masih dipakai, nanti data yang di-encrypt jadi tidak bisa dibuka).
+5. **Storage & PHP version**: ikuti langkah-langkah di bagian "Hosting" di atas (symlink manual `storage:link`, pastikan PHP 8.4 aktif buat vhost baru).
+6. **Cron**: pasang ulang `* * * * * php artisan schedule:run` di host baru (lihat bagian Scheduler di atas untuk contoh path PHP 8.4 eksplisit).
+7. **DNS**: arahkan domain baru (atau domain lama kalau cuma pindah host) ke IP host baru, aktifkan SSL (AutoSSL via cPanel kalau hostingnya cPanel).
+8. **Arahkan ulang client yang menunjuk ke backend ini** — ini sering kelupaan:
+   - **App mobile** (`simple-pos`): Pengaturan → Sinkronisasi, ganti URL API & token ke yang baru (token API tetap sama kalau DB-nya hasil restore, tapi cek ulang).
+   - **`pesenkopi`** (situs self-order): ganti `POS_API_BASE_URL` di `.env`-nya ke domain backend yang baru, lalu `php artisan config:clear` di sana.
+9. **Uji**: login admin, cek menu ke-load, buat 1 order tes dari mobile/pesenkopi, cek WA (kalau dipakai), lalu jalankan `php artisan db:backup` manual sekali buat pastikan jalur backup ke Google Drive juga sudah nyambung dari host baru.
