@@ -16,3 +16,6 @@ Artisan::command('inspire', function () {
 // hosting shared ini proc_open DINONAKTIFKAN. Schedule::call() menjalankan
 // command DALAM proses schedule:run yang sama, tidak butuh proc_open sama sekali.
 Schedule::call(fn () => Artisan::call('db:backup'))->dailyAt('02:00');
+
+// Foto produk TIDAK ikut db:backup (itu cuma dump database) - ini pelengkapnya.
+Schedule::call(fn () => Artisan::call('backup:product-images'))->dailyAt('02:10');

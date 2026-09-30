@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Concerns\PrunesOldBackups;
 use Ifsnop\Mysqldump\Mysqldump;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
 class BackupDatabase extends Command
 {
+    use PrunesOldBackups;
+
     protected $signature = 'db:backup {--disk=gdrive} {--keep=14}';
 
     protected $description = 'Dump database (pure-PHP, gzip) lalu unggah ke storage off-site (default Google Drive). Tanpa mysqldump eksternal.';
@@ -51,30 +54,10 @@ class BackupDatabase extends Command
         @unlink($tmp);
 
         // 3) Retensi: hapus backup lebih lama dari --keep hari.
-        $this->prune($disk, (int) $this->option('keep'));
+        $this->pruneOldBackups($disk, 'db', (int) $this->option('keep'));
 
         $this->info('Backup sukses → '.$disk.':'.$filename);
 
         return self::SUCCESS;
-    }
-
-    protected function prune(string $disk, int $keepDays): void
-    {
-        if ($keepDays <= 0) {
-            return;
-        }
-
-        $cutoff = now()->subDays($keepDays)->timestamp;
-
-        foreach (Storage::disk($disk)->files('db') as $file) {
-            try {
-                if (Storage::disk($disk)->lastModified($file) < $cutoff) {
-                    Storage::disk($disk)->delete($file);
-                    $this->line('  dihapus (lebih dari '.$keepDays.' hari): '.$file);
-                }
-            } catch (\Throwable $e) {
-                // Abaikan file yang gagal dibaca metadatanya.
-            }
-        }
     }
 }
