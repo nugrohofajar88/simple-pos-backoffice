@@ -26,12 +26,21 @@
             <span class="shrink-0 font-label-sm text-label-sm {{ $statusBadge[0] }} px-2 py-0.5 rounded-full font-semibold">{{ $statusBadge[1] }}</span>
         </div>
         <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $order->mobile_created_at->translatedFormat('d M Y H:i') }}</p>
-        @if ($order->customer_name)
-            <p class="font-body-sm text-body-sm text-on-surface-variant">Pelanggan: {{ $order->customer_name }}</p>
-        @endif
-        @if ($order->customer_phone)
-            <p class="font-body-sm text-body-sm text-on-surface-variant">No. WA: {{ $order->customer_phone }}</p>
-        @endif
+
+        <form method="POST" action="{{ route('orders.update-customer', $order) }}" class="mt-2 flex flex-wrap items-end gap-2">
+            @csrf @method('PUT')
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-0.5">Pelanggan</label>
+                <input type="text" name="customer_name" value="{{ old('customer_name', $order->customer_name) }}" placeholder="Nama pemesan"
+                       class="rounded-lg border border-outline-variant px-2.5 py-1.5 font-body-sm text-body-sm">
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-0.5">No. WA</label>
+                <input type="text" name="customer_phone" value="{{ old('customer_phone', $order->customer_phone) }}" placeholder="08xxxxxxxxxx"
+                       class="rounded-lg border border-outline-variant px-2.5 py-1.5 font-body-sm text-body-sm">
+            </div>
+            <button type="submit" class="font-label-sm text-label-sm text-primary font-semibold px-2.5 py-1.5">Simpan</button>
+        </form>
         @if ($order->source === 'app')
             <p class="font-body-sm text-body-sm text-on-surface-variant">
                 {{ $order->fulfillment_method === 'delivery' ? 'Diantar ke: '.$order->delivery_address : 'Ambil sendiri di kedai' }}
@@ -114,9 +123,9 @@
 
         <div class="mt-4 border-t border-outline-variant pt-3">
             <p class="font-body-sm text-body-sm text-on-surface-variant mb-2">
-                Order gak bisa diedit — kalau ada yang salah, hapus lalu buat order baru dari mobile.
-                Menghapus di sini cuma menghapus catatan/laporan di web, order lokal di HP yang bikin
-                order ini TIDAK ikut terhapus.
+                Item/harga/total gak bisa diedit — kalau ada yang salah di situ, hapus lalu buat order
+                baru dari mobile. Menghapus di sini cuma menghapus catatan/laporan di web, order lokal
+                di HP yang bikin order ini TIDAK ikut terhapus.
             </p>
             <form method="POST" action="{{ route('orders.destroy', $order) }}"
                   onsubmit="return confirm('Yakin hapus order {{ $order->order_number }}? Tindakan ini tidak bisa dibatalkan.')">

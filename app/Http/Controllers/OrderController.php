@@ -90,10 +90,13 @@ class OrderController extends Controller
     }
 
     /**
-     * Order gak bisa diedit (immutable, sesuai desain sistem) - kalau ada kesalahan,
-     * dihapus dari sini lalu dibuat ulang dari mobile. Cascade hapus items+modifiers
-     * (FK cascadeOnDelete). Ini CUMA menghapus catatan di web/laporan - order lokal
-     * di HP yang bikin order ini TIDAK ikut terhapus (gak ada jalur sync balik).
+     * Order gak bisa diedit (immutable, sesuai desain sistem) - kalau ada kesalahan
+     * pada item/harga/total, dihapus dari sini lalu dibuat ulang dari mobile.
+     * Pengecualian: nama & no. WA pemesan (lihat updateCustomer()) - itu cuma label,
+     * gak mempengaruhi laporan, jadi aman diedit langsung buat benerin typo.
+     * Cascade hapus items+modifiers (FK cascadeOnDelete). Ini CUMA menghapus catatan
+     * di web/laporan - order lokal di HP yang bikin order ini TIDAK ikut terhapus
+     * (gak ada jalur sync balik).
      */
     public function destroy(Order $order): RedirectResponse
     {
@@ -152,6 +155,22 @@ class OrderController extends Controller
         $order->update(['status' => 'voided']);
 
         return back()->with('status', "Order {$order->order_number} dibatalkan.");
+    }
+
+    /** Benerin typo nama/no. WA pemesan - cuma label, gak mempengaruhi total/laporan. */
+    public function updateCustomer(Request $request, Order $order): RedirectResponse
+    {
+        $validated = $request->validate([
+            'customer_name' => ['nullable', 'string', 'max:255'],
+            'customer_phone' => ['nullable', 'string', 'max:32'],
+        ]);
+
+        $order->update([
+            'customer_name' => trim((string) ($validated['customer_name'] ?? '')) ?: null,
+            'customer_phone' => trim((string) ($validated['customer_phone'] ?? '')) ?: null,
+        ]);
+
+        return back()->with('status', 'Data pemesan diperbarui.');
     }
 
     private function notifyCustomerConfirmed(Order $order): void
