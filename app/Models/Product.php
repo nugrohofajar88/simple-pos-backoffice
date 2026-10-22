@@ -49,4 +49,9 @@ class Product extends Model
     {
         return $this->hasMany(ModifierGroup::class);
     }
+
+    public function recipeItems(): HasMany
+    {
+        return $this->hasMany(ProductIngredient::class);
+    }
 }

@@ -3,9 +3,11 @@
 namespace App\Support;
 
 use App\Models\Category;
+use App\Models\Ingredient;
 use App\Models\ModifierGroup;
 use App\Models\ModifierOption;
 use App\Models\Product;
+use App\Models\ProductIngredient;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -145,5 +147,89 @@ class MenuService
     public function deleteModifierOption(ModifierOption $option): void
     {
         $option->delete();
+    }
+
+    public function createIngredient(array $data): Ingredient
+    {
+        return Ingredient::query()->create([
+            'name' => $data['name'],
+            'purchase_price' => $data['purchase_price'],
+            'purchase_qty' => $data['purchase_qty'],
+            'unit' => $data['unit'],
+            'is_active' => $data['is_active'] ?? true,
+            'sort_order' => $data['sort_order'] ?? 0,
+        ]);
+    }
+
+    public function updateIngredient(Ingredient $ingredient, array $data): Ingredient
+    {
+        $ingredient->update([
+            'name' => $data['name'] ?? $ingredient->name,
+            'purchase_price' => $data['purchase_price'] ?? $ingredient->purchase_price,
+            'purchase_qty' => $data['purchase_qty'] ?? $ingredient->purchase_qty,
+            'unit' => $data['unit'] ?? $ingredient->unit,
+            'is_active' => $data['is_active'] ?? $ingredient->is_active,
+        ]);
+
+        // Harga beli bahan ini berubah -> HPP semua produk yg makai di resepnya ikut ke-update.
+        foreach ($ingredient->productIngredients()->with('product')->get() as $recipeItem) {
+            $this->recalculateProductCost($recipeItem->product);
+        }
+
+        return $ingredient;
+    }
+
+    public function deleteIngredient(Ingredient $ingredient): void
+    {
+        $ingredient->delete();
+    }
+
+    public function addRecipeItem(Product $product, array $data): ProductIngredient
+    {
+        $item = ProductIngredient::query()->create([
+            'product_id' => $product->id,
+            'ingredient_id' => $data['ingredient_id'],
+            'qty_used' => $data['qty_used'],
+        ]);
+
+        $this->recalculateProductCost($product);
+
+        return $item;
+    }
+
+    public function updateRecipeItem(ProductIngredient $item, array $data): ProductIngredient
+    {
+        $item->update([
+            'qty_used' => $data['qty_used'] ?? $item->qty_used,
+        ]);
+
+        $this->recalculateProductCost($item->product);
+
+        return $item;
+    }
+
+    public function deleteRecipeItem(ProductIngredient $item): void
+    {
+        $product = $item->product;
+        $item->delete();
+        $this->recalculateProductCost($product);
+    }
+
+    /**
+     * HPP produk = SUM (harga per satuan bahan x gramasi dipakai) dari semua baris
+     * resepnya. Cuma jalan kalau produk PUNYA resep - produk tanpa resep tetap pakai
+     * cost_price manual (mode lama, gak dipaksa pindah ke cara ini).
+     */
+    public function recalculateProductCost(Product $product): void
+    {
+        $items = $product->recipeItems()->with('ingredient')->get();
+
+        if ($items->isEmpty()) {
+            return;
+        }
+
+        $totalCost = (int) round($items->sum(fn (ProductIngredient $item) => $item->ingredient->price_per_unit * $item->qty_used));
+
+        $product->update(['cost_price' => $totalCost]);
     }
 }

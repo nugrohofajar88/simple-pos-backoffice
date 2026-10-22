@@ -12,7 +12,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
             <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-3">Info Produk</h2>
             <form method="POST" action="{{ route('menu.products.update', $product) }}" enctype="multipart/form-data" class="space-y-3">
@@ -167,6 +167,81 @@
                     <span class="material-symbols-outlined text-title-md">add</span> Tambah Grup
                 </button>
             </form>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-4">
+            <h2 class="font-title-md text-title-md font-semibold text-on-surface mb-1">Resep / Racikan</h2>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Pilih bahan pokok &amp; gramasinya - HPP per bahan &amp; total langsung kehitung, otomatis masuk ke kolom HPP di kiri.</p>
+
+            @if ($ingredients->isEmpty())
+                <div class="font-body-sm text-body-sm text-outline italic">Belum ada bahan pokok. <a href="{{ route('ingredients.index') }}" class="text-primary underline">Tambah dulu di sini</a>.</div>
+            @else
+                <div class="space-y-2 mb-3">
+                    @forelse ($product->recipeItems as $item)
+                        <div class="flex items-center justify-between gap-2 border border-outline-variant rounded-lg px-3 py-2" x-data="{ editing: false }">
+                            <div x-show="!editing" class="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="font-body-sm text-body-sm font-medium text-on-surface truncate">{{ $item->ingredient->name }}</div>
+                                    <div class="font-label-sm text-label-sm text-on-surface-variant">{{ rtrim(rtrim(number_format($item->qty_used, 2, ',', '.'), '0'), ',') }}{{ $item->ingredient->unit }}</div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <span class="font-label-md text-label-md text-primary font-semibold">Rp{{ number_format($item->cost, 0, ',', '.') }}</span>
+                                    <button type="button" @click="editing = true" class="font-label-sm text-label-sm text-primary">Edit</button>
+                                    <form method="POST" action="{{ route('menu.recipe-items.destroy', $item) }}">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="font-label-sm text-label-sm text-error">Hapus</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <form x-show="editing" x-cloak method="POST" action="{{ route('menu.recipe-items.update', $item) }}" class="flex-1 flex items-center gap-2">
+                                @csrf @method('PUT')
+                                <span class="font-body-sm text-body-sm text-on-surface flex-1 truncate">{{ $item->ingredient->name }}</span>
+                                <input type="number" step="0.01" name="qty_used" value="{{ $item->qty_used }}" required min="0.01" class="w-20 rounded-lg border border-outline-variant px-2 py-1 text-body-sm">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">{{ $item->ingredient->unit }}</span>
+                                <button type="submit" class="bg-primary text-on-primary font-label-sm text-label-sm px-2 py-1 rounded-lg">Simpan</button>
+                                <button type="button" @click="editing = false" class="font-label-sm text-label-sm text-on-surface-variant">Batal</button>
+                            </form>
+                        </div>
+                    @empty
+                        <div class="font-body-sm text-body-sm text-outline italic">Belum ada bahan di resep produk ini.</div>
+                    @endforelse
+                </div>
+
+                @if ($product->recipeItems->isNotEmpty())
+                    <div class="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg mb-3">
+                        <span class="font-label-md text-label-md font-semibold text-on-surface">Total HPP / sajian</span>
+                        <span class="font-title-md text-title-md font-bold text-primary">Rp{{ number_format($product->cost_price, 0, ',', '.') }}</span>
+                    </div>
+                @endif
+
+                @php
+                    $usedIngredientIds = $product->recipeItems->pluck('ingredient_id');
+                    $availableIngredients = $ingredients->whereNotIn('id', $usedIngredientIds);
+                @endphp
+
+                @if ($availableIngredients->isNotEmpty())
+                    <form method="POST" action="{{ route('menu.recipe-items.store', $product) }}" class="flex items-end gap-2 pt-3 border-t border-outline-variant">
+                        @csrf
+                        <div class="flex-1">
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Bahan</label>
+                            <select name="ingredient_id" required class="w-full rounded-lg border border-outline-variant px-2 py-1.5 text-body-sm">
+                                <option value="">— pilih —</option>
+                                @foreach ($availableIngredients as $ingredient)
+                                    <option value="{{ $ingredient->id }}">{{ $ingredient->name }} ({{ $ingredient->unit }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="w-24">
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Gramasi</label>
+                            <input type="number" step="0.01" name="qty_used" required min="0.01" class="w-full rounded-lg border border-outline-variant px-2 py-1.5 text-body-sm">
+                        </div>
+                        <button type="submit" class="bg-primary text-on-primary font-label-sm text-label-sm px-3 py-2 rounded-lg">+</button>
+                    </form>
+                @else
+                    <p class="font-body-sm text-body-sm text-on-surface-variant italic">Semua bahan pokok yg ada sudah dipakai di resep ini.</p>
+                @endif
+            @endif
         </div>
     </div>
 @endsection

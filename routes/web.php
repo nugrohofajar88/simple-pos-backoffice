@@ -5,12 +5,14 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ModifierGroupController;
 use App\Http\Controllers\ModifierOptionController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OtherIncomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RecipeItemController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +46,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/menu/modifier-groups/{modifierGroup}/options', [ModifierOptionController::class, 'store'])->name('menu.modifier-options.store');
     Route::put('/menu/modifier-options/{modifierOption}', [ModifierOptionController::class, 'update'])->name('menu.modifier-options.update');
     Route::delete('/menu/modifier-options/{modifierOption}', [ModifierOptionController::class, 'destroy'])->name('menu.modifier-options.destroy');
+
+    Route::get('/ingredients', [IngredientController::class, 'index'])->name('ingredients.index');
+    Route::post('/ingredients', [IngredientController::class, 'store'])->name('ingredients.store');
+    Route::put('/ingredients/{ingredient}', [IngredientController::class, 'update'])->name('ingredients.update');
+    Route::delete('/ingredients/{ingredient}', [IngredientController::class, 'destroy'])->name('ingredients.destroy');
+
+    Route::post('/menu/products/{product}/recipe-items', [RecipeItemController::class, 'store'])->name('menu.recipe-items.store');
+    Route::put('/menu/recipe-items/{recipeItem}', [RecipeItemController::class, 'update'])->name('menu.recipe-items.update');
+    Route::delete('/menu/recipe-items/{recipeItem}', [RecipeItemController::class, 'destroy'])->name('menu.recipe-items.destroy');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');

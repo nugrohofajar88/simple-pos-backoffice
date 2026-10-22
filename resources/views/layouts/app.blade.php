@@ -38,6 +38,7 @@
                             ['route' => 'cashier.index', 'label' => 'Kasir', 'icon' => 'point_of_sale'],
                             ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'menu.index', 'label' => 'Menu', 'icon' => 'coffee'],
+                            ['route' => 'ingredients.index', 'label' => 'Bahan Pokok', 'icon' => 'inventory_2'],
                             ['route' => 'orders.index', 'label' => 'Riwayat Order', 'icon' => 'receipt'],
                             ['route' => 'expenses.index', 'label' => 'Belanja', 'icon' => 'wallet'],
                             ['route' => 'other-incomes.index', 'label' => 'Pendapatan Lain', 'icon' => 'payments'],

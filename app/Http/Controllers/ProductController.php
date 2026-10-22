@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Ingredient;
 use App\Models\Product;
 use App\Support\MenuService;
 use Illuminate\Http\RedirectResponse;
@@ -33,11 +34,15 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $product->load(['modifierGroups.options' => fn ($query) => $query->orderBy('sort_order')]);
+        $product->load([
+            'modifierGroups.options' => fn ($query) => $query->orderBy('sort_order'),
+            'recipeItems.ingredient',
+        ]);
 
         return view('menu.product-edit', [
             'product' => $product,
             'categories' => Category::query()->orderBy('sort_order')->get(),
+            'ingredients' => Ingredient::query()->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
