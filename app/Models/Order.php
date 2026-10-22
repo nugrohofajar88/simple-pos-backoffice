@@ -18,6 +18,7 @@ class Order extends Model
         'customer_phone',
         'subtotal',
         'total',
+        'hpp',
         'payment_method',
         'fulfillment_method',
         'delivery_address',

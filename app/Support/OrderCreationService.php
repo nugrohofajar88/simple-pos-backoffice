@@ -34,6 +34,7 @@ class OrderCreationService
         return DB::transaction(function () use ($data, $source, $status, $fulfillmentMethod) {
             $now = now();
             $subtotal = 0;
+            $hpp = 0;
             $prepared = [];
 
             foreach ($data['items'] as $itemInput) {
@@ -69,6 +70,7 @@ class OrderCreationService
                 $unitPrice = (int) $product->base_price;
                 $lineTotal = ($unitPrice + $modifiersTotal) * $qty;
                 $subtotal += $lineTotal;
+                $hpp += (int) $product->cost_price * $qty;
 
                 $prepared[] = [
                     'product' => $product,
@@ -91,6 +93,7 @@ class OrderCreationService
                 'customer_phone' => $data['customerPhone'] ?? null,
                 'subtotal' => $subtotal,
                 'total' => $subtotal,
+                'hpp' => $hpp,
                 'payment_method' => $data['paymentMethod'],
                 'fulfillment_method' => $fulfillmentMethod,
                 'delivery_address' => $data['deliveryAddress'] ?? null,

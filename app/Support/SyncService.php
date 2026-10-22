@@ -42,12 +42,18 @@ class SyncService
                     continue;
                 }
 
+                $hpp = 0;
+                foreach ($orderData['items'] ?? [] as $itemData) {
+                    $hpp += (int) ($itemData['costPrice'] ?? 0) * (int) $itemData['qty'];
+                }
+
                 $order = Order::query()->create([
                     'order_number' => $orderData['orderNumber'],
                     'status' => $orderData['status'] ?? 'completed',
                     'customer_name' => $orderData['customerName'] ?? null,
                     'subtotal' => $orderData['subtotal'],
                     'total' => $orderData['total'],
+                    'hpp' => $hpp,
                     'payment_method' => $orderData['paymentMethod'],
                     'note' => $orderData['note'] ?? null,
                     'mobile_created_at' => $orderData['createdAt'],
